@@ -1,0 +1,15 @@
+*.iml
+.gradle
+/.idea
+/app/build
+/build
+/local.properties
+/gradle
+gradle.properties
+gradlew
+gradlew.bat
+proguard-rules.pro
+appengine-web.xml
+app/libs/
+projectFilesBackup/
+*.apk
