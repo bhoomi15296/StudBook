@@ -35,6 +35,8 @@ import com.github.mertakdut.CssStatus;
 import com.github.mertakdut.Reader;
 import com.github.mertakdut.exception.OutOfPagesException;
 import com.github.mertakdut.exception.ReadingException;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 public class MainActivity extends AppCompatActivity implements PageFragment.OnFragmentReadyListener {
 
@@ -51,21 +53,43 @@ public class MainActivity extends AppCompatActivity implements PageFragment.OnFr
      * {@link FragmentStatePagerAdapter}.
      */
     private SectionsPagerAdapter mSectionsPagerAdapter;
-
+    DatabaseReference rootRef,demoRef;
     private int pageCount = Integer.MAX_VALUE;
     private int pxScreenWidth;
 
     private boolean isPickedWebView = false;
-
     private MenuItem searchMenuItem;
     private SearchView searchView;
-
+    private DatabaseReference mDatabase;
     private boolean isSkippedToPage = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        //mDatabase = FirebaseDatabase.getInstance().getReference("stud-e-book");
+        //writeNewUser("1","aarav","a@a.com");
+
+        String[] usernameArray= {"John", "Paul", "Ringo", "George","Raj"};
+        String[] emailArray= {"john@gmail.com", "pp@yahoo.in", "ring12@gmail.com", "geo1972@outlook.com","rajram@gmail.com"};
+        String[] passwordArray= {"****", "*****", "****", "****","*****"};
+
+        int numberOfItems = usernameArray.length;
+        rootRef = FirebaseDatabase.getInstance().getReference("stud-e-book-details");
+        for (int i=0; i<numberOfItems; i++)
+        {
+            String name = usernameArray[i];
+            String email = emailArray[i];
+            String pwd = passwordArray[i];
+            rootRef.child("user details").child(name).child("email").setValue(email);
+            rootRef.child("user details").child(name).child("pwd").setValue(pwd);
+        }
+
+        //rootRef = FirebaseDatabase.getInstance().getReference("stud-e-book-test");
+        //demoRef = rootRef.child("stud-e-book");
+        //String value = "hello help";
+        //demoRef.push().setValue(value);
+        //rootRef.child("namess").child("name").setValue("Sri");
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -104,6 +128,12 @@ public class MainActivity extends AppCompatActivity implements PageFragment.OnFr
                 Toast.makeText(MainActivity.this, e.getMessage(), Toast.LENGTH_LONG).show();
             }
         }
+    }
+    private void writeNewUser(String userId, String name, String email) {
+        User user = new User(name, email);
+        System.out.print(user);
+        mDatabase.child("stud-e-book").child(userId).setValue(user);
+
     }
 
     @Override
