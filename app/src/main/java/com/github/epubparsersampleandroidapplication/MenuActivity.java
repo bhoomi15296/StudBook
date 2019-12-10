@@ -8,6 +8,8 @@ import android.os.Environment;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.GridView;
@@ -71,11 +73,13 @@ public class MenuActivity extends AppCompatActivity {
                     if (title != null && !title.equals("")) {
                         bookInfo.setTitle(reader.getInfoPackage().getMetadata().getTitle());
                     } else { // If title doesn't exist, use fileName instead.
+                        Log.d("FILENAME USING", "doInBackground: ");
                         int dotIndex = bookInfo.getTitle().lastIndexOf('.');
                         bookInfo.setTitle(bookInfo.getTitle().substring(0, dotIndex));
                     }
 
                     bookInfo.setCoverImage(reader.getCoverImage());
+                    Log.d("COVER", "doInBackground: "+ reader.getCoverImage());
                 } catch (ReadingException e) {
                     occuredException = e;
                     e.printStackTrace();
@@ -111,8 +115,14 @@ public class MenuActivity extends AppCompatActivity {
 
             List<File> files = getListFiles(new File(Environment.getExternalStorageDirectory().getAbsolutePath()));
 
+//            read from database instead
             File sampleFile = getFileFromAssets("pg28885-images_new.epub");
+            File gas_oil = getFileFromAssets("Gas_and_Oil_Engines,_Simply_Explained_by_Walter_C._Runciman.epub");
+            File opportunities_oil = getFileFromAssets("Opportunities_in_Engineering_by_Charles_M._Horton.epub");
+
             files.add(0, sampleFile);
+            files.add(1, gas_oil);
+            files.add(2, opportunities_oil);
 
             for (File file : files) {
                 BookInfo bookInfo = new BookInfo();

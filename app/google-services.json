@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "573245448741",
+    "firebase_url": "https://stud-e-book.firebaseio.com",
+    "project_id": "stud-e-book",
+    "storage_bucket": "stud-e-book.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:573245448741:android:a9563f7e42226fc46cd5cc",
+        "android_client_info": {
+          "package_name": "com.github.epubparsersampleandroidapplication"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "573245448741-g8dpu2icb1b2v0h3fbnvph54qvk8o2h9.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.github.epubparsersampleandroidapplication",
+            "certificate_hash": "338efcf2e83dfc02e8634a39d50f0e4be254d019"
+          }
+        },
+        {
+          "client_id": "573245448741-hlp7rg4oimpnt74jj49urdfag4nrjufh.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC-Ce9y_8C5Ulmy3mqboo6vF0BxR3Zmfs8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "573245448741-hlp7rg4oimpnt74jj49urdfag4nrjufh.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

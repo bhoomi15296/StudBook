@@ -136,6 +136,21 @@ public class MainActivity extends AppCompatActivity implements PageFragment.OnFr
 
     }
 
+    private void insertBooks() {
+//        insert all books with categories and titles
+
+    }
+
+    private void insertRecommendedBooks() {
+//        insert all books with their recommended 3
+
+    }
+
+
+    private void trackBook() {
+// insert user uuid and book uuid with page number
+    }
+
     @Override
     public View onFragmentReady(int position) {
 
