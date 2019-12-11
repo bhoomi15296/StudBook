@@ -1,8 +1,10 @@
 package com.github.epubparsersampleandroidapplication;
 
+import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
@@ -13,8 +15,10 @@ import androidx.appcompat.widget.Toolbar;
 
 import android.speech.RecognizerIntent;
 import android.util.Log;
+import android.util.SparseArray;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.GridView;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
@@ -23,6 +27,9 @@ import android.widget.Toast;
 
 import com.github.mertakdut.Reader;
 import com.github.mertakdut.exception.ReadingException;
+import com.google.android.gms.vision.Frame;
+import com.google.android.gms.vision.text.TextBlock;
+import com.google.android.gms.vision.text.TextRecognizer;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -36,7 +43,10 @@ public class MenuActivity extends AppCompatActivity {
     private ProgressBar progressBar;
     private TextView txtSpeechInput;
     private ImageButton btnSpeak;
+    private Button takePicture;
     private final int REQ_CODE_SPEECH_INPUT = 100;
+    private static final int CAMERA_REQUEST = 1888; // field
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,6 +58,7 @@ public class MenuActivity extends AppCompatActivity {
 
         txtSpeechInput = (TextView) findViewById(R.id.txtSpeechInput);
         btnSpeak = (ImageButton) findViewById(R.id.btnSpeak);
+        takePicture =  findViewById(R.id.Camera);
         Log.d("click",btnSpeak.toString());
 
         btnSpeak.setOnClickListener(new View.OnClickListener() {
@@ -55,6 +66,18 @@ public class MenuActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Log.d("click","image clicked");
                 promptSpeechInput();
+
+            }
+
+        });
+
+        takePicture.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                // Do something in response to button click
+                Intent cameraIntent = new  Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+                startActivityForResult(cameraIntent, CAMERA_REQUEST);
+
+
             }
         });
 
@@ -254,6 +277,24 @@ public class MenuActivity extends AppCompatActivity {
                 }
                 break;
             }
+        }
+
+        if (requestCode == CAMERA_REQUEST && resultCode == Activity.RESULT_OK) {
+            Bitmap picture = (Bitmap) data.getExtras().get("data");//this is your bitmap image and now you can do whatever you want with this
+            TextRecognizer textRecognizer = new TextRecognizer.Builder(getApplicationContext()).build();
+            Frame imageFrame = new Frame.Builder()
+                    .setBitmap(picture)                 // your image bitmap
+                    .build();
+
+            String imageText = "";
+
+            SparseArray<TextBlock> textBlocks = textRecognizer.detect(imageFrame);
+
+            for (int i = 0; i < textBlocks.size(); i++) {
+                TextBlock textBlock = textBlocks.get(textBlocks.keyAt(i));
+                imageText = textBlock.getValue();                   // return string
+            }
+            Log.d("TEXT", "onActivityResult: " + imageText);
         }
     }
 
