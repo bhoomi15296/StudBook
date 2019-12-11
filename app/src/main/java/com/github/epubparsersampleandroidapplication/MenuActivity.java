@@ -1,31 +1,52 @@
 package com.github.epubparsersampleandroidapplication;
 
+import android.app.Activity;
+import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+
+
+import android.speech.RecognizerIntent;
+import android.util.Log;
+import android.util.SparseArray;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.GridView;
+import android.widget.ImageButton;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.github.mertakdut.Reader;
 import com.github.mertakdut.exception.ReadingException;
+import com.google.android.gms.vision.Frame;
+import com.google.android.gms.vision.text.TextBlock;
+import com.google.android.gms.vision.text.TextRecognizer;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public class MenuActivity extends AppCompatActivity {
 
     private ProgressBar progressBar;
+    private TextView txtSpeechInput;
+    private ImageButton btnSpeak;
+    private Button takePicture;
+    private final int REQ_CODE_SPEECH_INPUT = 100;
+    private static final int CAMERA_REQUEST = 1888; // field
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,6 +55,32 @@ public class MenuActivity extends AppCompatActivity {
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        txtSpeechInput = (TextView) findViewById(R.id.txtSpeechInput);
+        btnSpeak = (ImageButton) findViewById(R.id.btnSpeak);
+        takePicture =  findViewById(R.id.Camera);
+        Log.d("click",btnSpeak.toString());
+
+        btnSpeak.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d("click","image clicked");
+                promptSpeechInput();
+
+            }
+
+        });
+
+        takePicture.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                // Do something in response to button click
+                Intent cameraIntent = new  Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+                startActivityForResult(cameraIntent, CAMERA_REQUEST);
+
+
+            }
+        });
+
 
         ((GridView) findViewById(R.id.grid_book_info)).setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -71,11 +118,13 @@ public class MenuActivity extends AppCompatActivity {
                     if (title != null && !title.equals("")) {
                         bookInfo.setTitle(reader.getInfoPackage().getMetadata().getTitle());
                     } else { // If title doesn't exist, use fileName instead.
+                        Log.d("FILENAME USING", "doInBackground: ");
                         int dotIndex = bookInfo.getTitle().lastIndexOf('.');
                         bookInfo.setTitle(bookInfo.getTitle().substring(0, dotIndex));
                     }
 
                     bookInfo.setCoverImage(reader.getCoverImage());
+                    Log.d("COVER", "doInBackground: "+ reader.getCoverImage());
                 } catch (ReadingException e) {
                     occuredException = e;
                     e.printStackTrace();
@@ -111,8 +160,14 @@ public class MenuActivity extends AppCompatActivity {
 
             List<File> files = getListFiles(new File(Environment.getExternalStorageDirectory().getAbsolutePath()));
 
+//            read from database instead
             File sampleFile = getFileFromAssets("pg28885-images_new.epub");
+            File gas_oil = getFileFromAssets("Gas_and_Oil_Engines,_Simply_Explained_by_Walter_C._Runciman.epub");
+            File opportunities_oil = getFileFromAssets("Opportunities_in_Engineering_by_Charles_M._Horton.epub");
+
             files.add(0, sampleFile);
+            files.add(1, gas_oil);
+            files.add(2, opportunities_oil);
 
             for (File file : files) {
                 BookInfo bookInfo = new BookInfo();
@@ -190,6 +245,57 @@ public class MenuActivity extends AppCompatActivity {
                 .show();
 
 
+    }
+
+    private void promptSpeechInput() {
+        Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
+                RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault());
+        intent.putExtra(RecognizerIntent.EXTRA_PROMPT,
+                getString(R.string.speech_prompt));
+        try {
+            startActivityForResult(intent, REQ_CODE_SPEECH_INPUT);
+        } catch (ActivityNotFoundException a) {
+            Toast.makeText(getApplicationContext(),
+                    getString(R.string.speech_not_supported),
+                    Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        switch (requestCode) {
+            case REQ_CODE_SPEECH_INPUT: {
+                if (resultCode == RESULT_OK && null != data) {
+
+                    ArrayList<String> result = data
+                            .getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
+                    Log.d("textValue",result.get(0));
+                    txtSpeechInput.setText(result.get(0));
+                }
+                break;
+            }
+        }
+
+        if (requestCode == CAMERA_REQUEST && resultCode == Activity.RESULT_OK) {
+            Bitmap picture = (Bitmap) data.getExtras().get("data");//this is your bitmap image and now you can do whatever you want with this
+            TextRecognizer textRecognizer = new TextRecognizer.Builder(getApplicationContext()).build();
+            Frame imageFrame = new Frame.Builder()
+                    .setBitmap(picture)                 // your image bitmap
+                    .build();
+
+            String imageText = "";
+
+            SparseArray<TextBlock> textBlocks = textRecognizer.detect(imageFrame);
+
+            for (int i = 0; i < textBlocks.size(); i++) {
+                TextBlock textBlock = textBlocks.get(textBlocks.keyAt(i));
+                imageText = textBlock.getValue();                   // return string
+            }
+            Log.d("TEXT", "onActivityResult: " + imageText);
+        }
     }
 
 }
