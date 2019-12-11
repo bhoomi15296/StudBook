@@ -220,6 +220,7 @@ public class MainActivity extends AppCompatActivity implements PageFragment.OnFr
         } else {
             super.onBackPressed();
         }
+
     }
 
     @Override
