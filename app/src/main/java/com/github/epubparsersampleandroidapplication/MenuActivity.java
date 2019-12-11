@@ -71,11 +71,11 @@ public class MenuActivity extends Fragment {
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        Toolbar toolbar = (Toolbar) getView().findViewById(R.id.toolbar);
+//        Toolbar toolbar = (Toolbar) getView().findViewById(R.id.toolbar);
 
         txtSpeechInput = (TextView) getView().findViewById(R.id.txtSpeechInput);
         btnSpeak = (ImageButton) getView().findViewById(R.id.btnSpeak);
-        takePicture =  getView().findViewById(R.id.Camera);
+        takePicture =  getView().findViewById(R.id.camera);
         Log.d("click",btnSpeak.toString());
 
         btnSpeak.setOnClickListener(new View.OnClickListener() {

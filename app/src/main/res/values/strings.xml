@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">EpubParser Sample Android Application</string>
+    <string name="app_name">Stud-e-Book</string>
     <string name="title_activity_menu">MenuActivity</string>
     <string name="textHint">Search Here</string>
     <string name="button_go">Go</string>

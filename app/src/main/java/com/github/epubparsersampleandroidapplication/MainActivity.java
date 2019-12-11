@@ -91,7 +91,7 @@ public class MainActivity extends AppCompatActivity implements PageFragment.OnFr
         //demoRef.push().setValue(value);
         //rootRef.child("namess").child("name").setValue("Sri");
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+//        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
 //        setSupportActionBar(toolbar);
 
         pxScreenWidth = getResources().getDisplayMetrics().widthPixels;
