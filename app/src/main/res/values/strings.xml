@@ -1,4 +1,8 @@
 <resources>
     <string name="app_name">EpubParser Sample Android Application</string>
     <string name="title_activity_menu">MenuActivity</string>
+    <string name="textHint">Search Here</string>
+    <string name="button_go">Go</string>
+    <string name="speech_prompt">Say something&#8230;</string>
+    <string name="speech_not_supported">Sorry! Your device doesn\'t support speech input</string>
 </resources>
