@@ -8,15 +8,20 @@ import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
+
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.Fragment;
 
 
 import android.speech.RecognizerIntent;
 import android.util.Log;
 import android.util.SparseArray;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.GridView;
@@ -38,7 +43,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-public class MenuActivity extends AppCompatActivity {
+public class MenuActivity extends Fragment {
 
     private ProgressBar progressBar;
     private TextView txtSpeechInput;
@@ -49,16 +54,28 @@ public class MenuActivity extends AppCompatActivity {
 
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_menu);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
 
-        txtSpeechInput = (TextView) findViewById(R.id.txtSpeechInput);
-        btnSpeak = (ImageButton) findViewById(R.id.btnSpeak);
-        takePicture =  findViewById(R.id.Camera);
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        // Inflate the layout for this fragment
+        return inflater.inflate(R.layout.activity_menu, container, false);
+
+
+    }
+
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        Toolbar toolbar = (Toolbar) getView().findViewById(R.id.toolbar);
+
+        txtSpeechInput = (TextView) getView().findViewById(R.id.txtSpeechInput);
+        btnSpeak = (ImageButton) getView().findViewById(R.id.btnSpeak);
+        takePicture =  getView().findViewById(R.id.Camera);
         Log.d("click",btnSpeak.toString());
 
         btnSpeak.setOnClickListener(new View.OnClickListener() {
@@ -82,7 +99,7 @@ public class MenuActivity extends AppCompatActivity {
         });
 
 
-        ((GridView) findViewById(R.id.grid_book_info)).setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        ((GridView) getView().findViewById(R.id.grid_book_info)).setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 String clickedItemFilePath = ((BookInfo) adapterView.getAdapter().getItem(i)).getFilePath();
@@ -90,10 +107,11 @@ public class MenuActivity extends AppCompatActivity {
             }
         });
 
-        progressBar = (ProgressBar) findViewById(R.id.progressbar);
+        progressBar = (ProgressBar) getView().findViewById(R.id.progressbar);
 
         new ListBookInfoTask().execute();
     }
+
 
     private class ListBookInfoTask extends AsyncTask<Object, Object, List<BookInfo>> {
 
@@ -140,12 +158,12 @@ public class MenuActivity extends AppCompatActivity {
             progressBar.setVisibility(View.GONE);
 
             if (bookInfoList != null) {
-                BookInfoGridAdapter adapter = new BookInfoGridAdapter(MenuActivity.this, bookInfoList);
-                ((GridView) findViewById(R.id.grid_book_info)).setAdapter(adapter);
+                BookInfoGridAdapter adapter = new BookInfoGridAdapter(getActivity().getApplicationContext(), bookInfoList);
+                ((GridView) getView().findViewById(R.id.grid_book_info)).setAdapter(adapter);
             }
 
             if (occuredException != null) {
-                Toast.makeText(MenuActivity.this, occuredException.getMessage(), Toast.LENGTH_LONG).show();
+                Toast.makeText(getActivity().getApplicationContext(), occuredException.getMessage(), Toast.LENGTH_LONG).show();
             }
         }
     }
@@ -184,11 +202,11 @@ public class MenuActivity extends AppCompatActivity {
 
     public File getFileFromAssets(String fileName) {
 
-        File file = new File(getCacheDir() + "/" + fileName);
+        File file = new File(getActivity().getCacheDir() + "/" + fileName);
 
         if (!file.exists()) try {
 
-            InputStream is = getAssets().open(fileName);
+            InputStream is = getActivity().getAssets().open(fileName);
             int size = is.available();
             byte[] buffer = new byte[size];
             is.read(buffer);
@@ -222,11 +240,11 @@ public class MenuActivity extends AppCompatActivity {
     }
 
     private void askForWidgetToUse(final String filePath) {
-
-        final Intent intent = new Intent(MenuActivity.this, MainActivity.class);
+        Log.d("BEFORE", "askForWidgetToUse: ");
+        final Intent intent = new Intent(getActivity(), MainActivity.class);
         intent.putExtra("filePath", filePath);
-
-        new AlertDialog.Builder(MenuActivity.this)
+        Log.d("AFTER", "askForWidgetToUse: ");
+        new AlertDialog.Builder(getActivity())
                 .setTitle("Pick your widget")
                 .setMessage("Textview or WebView?")
                 .setPositiveButton("TextView", new DialogInterface.OnClickListener() {
@@ -257,18 +275,18 @@ public class MenuActivity extends AppCompatActivity {
         try {
             startActivityForResult(intent, REQ_CODE_SPEECH_INPUT);
         } catch (ActivityNotFoundException a) {
-            Toast.makeText(getApplicationContext(),
+            Toast.makeText(getActivity().getApplicationContext(),
                     getString(R.string.speech_not_supported),
                     Toast.LENGTH_SHORT).show();
         }
     }
 
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
         switch (requestCode) {
             case REQ_CODE_SPEECH_INPUT: {
-                if (resultCode == RESULT_OK && null != data) {
+                if (resultCode == -1 && null != data) {
 
                     ArrayList<String> result = data
                             .getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
@@ -281,7 +299,7 @@ public class MenuActivity extends AppCompatActivity {
 
         if (requestCode == CAMERA_REQUEST && resultCode == Activity.RESULT_OK) {
             Bitmap picture = (Bitmap) data.getExtras().get("data");//this is your bitmap image and now you can do whatever you want with this
-            TextRecognizer textRecognizer = new TextRecognizer.Builder(getApplicationContext()).build();
+            TextRecognizer textRecognizer = new TextRecognizer.Builder(getActivity().getApplicationContext()).build();
             Frame imageFrame = new Frame.Builder()
                     .setBitmap(picture)                 // your image bitmap
                     .build();
