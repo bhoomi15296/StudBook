@@ -11,7 +11,11 @@
         android:layout_height="wrap_content"
         android:layout_margin="15dp"
         android:hint="Email"
-        android:inputType="textEmailAddress" />
+        android:inputType="textEmailAddress"
+        android:fontFamily="sans-serif-condensed-light"
+        android:textAlignment="viewStart"
+        android:textColor="#000000"
+        android:typeface="normal" />
 
     <EditText
         android:id="@+id/loginpaswd"
@@ -19,15 +23,22 @@
         android:layout_height="wrap_content"
         android:layout_margin="15dp"
         android:hint="Password"
-        android:inputType="numberPassword"/>
+        android:inputType="numberPassword"
+        android:fontFamily="sans-serif-condensed-light"
+        android:textAlignment="viewStart"
+        android:textColor="#000000"
+        android:typeface="normal" />
 
     <Button
         android:id="@+id/btnLogIn"
-        android:layout_width="match_parent"
+        android:layout_width="150dp"
         android:layout_height="wrap_content"
         android:layout_margin="15dp"
-        android:text="Login In"
-        android:textSize="25dp" />
+        android:background="#6BB1D3"
+        android:text="Login"
+        android:textColor="#FFFFFF"
+        android:textSize="16sp"
+        android:textStyle="bold" />
 
     <TextView
         android:id="@+id/TVSignIn"
@@ -35,5 +46,6 @@
         android:layout_height="wrap_content"
         android:layout_margin="15dp"
         android:text="New User? Register Here"
-        android:textSize="20dp" />
+        android:textSize="20dp"
+        android:textStyle="bold" />
 </LinearLayout>

@@ -3,8 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     android:gravity="center"
+    android:orientation="vertical"
     tools:context="com.github.epubparsersampleandroidapplication.SignUp">
 
     <EditText
@@ -14,26 +14,42 @@
         android:layout_margin="15dp"
         android:hint="Email"
         android:inputType="textEmailAddress"
-        />
+        android:fontFamily="sans-serif-condensed-light"
+        android:textAlignment="viewStart"
+        android:textColor="#000000"
+        android:typeface="normal" />
+
     <EditText
         android:id="@+id/ETpassword"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="15dp"
+        android:fontFamily="sans-serif-condensed-light"
         android:hint="Password"
         android:inputType="numberPassword"
-        />
+        android:textAlignment="viewStart"
+        android:textColor="#000000"
+        android:typeface="normal" />
+
+
     <Button
         android:id="@+id/btnSignUp"
-        android:layout_width="match_parent"
+        android:layout_width="150dp"
         android:layout_height="wrap_content"
         android:layout_margin="15dp"
-        android:text="Sign Up"/>
+        android:background="#6BB1D3"
+        android:text="Sign Up"
+        android:textColor="#FFFFFF"
+        android:textSize="16sp"
+        android:textStyle="bold" />
+
+
     <TextView
         android:id="@+id/TVSignIn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Already have an account? Sign in Here"
         android:layout_margin="15dp"
-        android:textSize="20dp"/>
+        android:text="Already have an account? Sign in Here"
+        android:textSize="20dp"
+        android:textStyle="bold" />
 </LinearLayout>

@@ -143,97 +143,140 @@ public class MainActivity extends AppCompatActivity implements PageFragment.OnFr
 //            finish();
         }
 
-
-        // Create listener
-        proximitySensorListener = new SensorEventListener() {
-            @Override
-            public void onSensorChanged(SensorEvent sensorEvent) {
-                Log.d(TAG, "IN SENSOR");
-                // More code goes here
-                if (sensorEvent.values[0] < proximitySensor.getMaximumRange()) {
-                    //near
-                    //Toast.makeText(mContext, "near", Toast.LENGTH_SHORT).show();
-                    startMilli = System.currentTimeMillis();
-
-                } else {
-                    //far
-                    //Toast.makeText(mContext, "far", Toast.LENGTH_SHORT).show();
-                    endMilli = System.currentTimeMillis();
-                    changePage(endMilli - startMilli);
-                }
-            }
-
-            private void changePage(long l) {
-
-                //Log.e("Time: ", String.valueOf(l));
-                startMilli = 0;
-
-                if (l < mThreshold) {
-                    //Toast.makeText(mContext, "Next ", Toast.LENGTH_SHORT).show();
-                    int nextpage=mViewPager.getCurrentItem()+1;
-                    mViewPager.setCurrentItem(nextpage);
-                }
-                else {
-                    //Toast.makeText(mContext, "Previous", Toast.LENGTH_SHORT).show(); /*Copyright (c) @ 2019 Yash Prakash
-                    //                 */
-                    if(mViewPager.getCurrentItem()>0) {
-                        int nextpage=mViewPager.getCurrentItem()-1;
-                        mViewPager.setCurrentItem(nextpage);
-                    }
-                    else {
-                        Toast.makeText(MainActivity.this, "You are on the first page!", Toast.LENGTH_SHORT).show();
-                    }
-                }
-            }
-
-            @Override
-            public void onAccuracyChanged(Sensor sensor, int i) {
-            }
-        };
-
         rotationVectorSensor =
                 sensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR);
 
-        rvListener = new SensorEventListener() {
+        if(rotationVectorSensor == null) {
+            Log.e(TAG, "Rotation sensor not available.");
+//            finish();
+        }
+
+        Button b_prox = findViewById(R.id.pbutton);
+        Button b_gyro = findViewById(R.id.gbutton);
+        Button b_normal = findViewById(R.id.nbutton);
+
+
+        b_prox.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onSensorChanged(SensorEvent sensorEvent) {
-                float[] rotationMatrix = new float[16];
-                SensorManager.getRotationMatrixFromVector(rotationMatrix, sensorEvent.values);
+            public void onClick(View view) {
+                Log.d(TAG, "In Prox Button");
 
-                float[] remappedRotationMatrix = new float[16];
-                SensorManager.remapCoordinateSystem(rotationMatrix,
-                        SensorManager.AXIS_X,
-                        SensorManager.AXIS_Z,
-                        remappedRotationMatrix);
+                sensorManager.unregisterListener(rvListener);
+                sensorManager.registerListener(proximitySensorListener,
+                        proximitySensor, 2 * 1000 * 1000);
 
-                float[] orientations = new float[3];
-                SensorManager.getOrientation(remappedRotationMatrix, orientations);
+                proximitySensorListener = new SensorEventListener() {
+                    @Override
+                    public void onSensorChanged(SensorEvent sensorEvent) {
+                        Log.d(TAG, "IN PROX SENSOR");
+                        // More code goes here
+                        if (sensorEvent.values[0] < proximitySensor.getMaximumRange()) {
+                            //near
+                            //Toast.makeText(mContext, "near", Toast.LENGTH_SHORT).show();
+                            startMilli = System.currentTimeMillis();
 
-                for(int i = 0; i < 3; i++) {
-                    orientations[i] = (float)(Math.toDegrees(orientations[i]));
-                }
-
-                if(orientations[2] > 45) {
-                    int nextpage=mViewPager.getCurrentItem()+1;
-                    mViewPager.setCurrentItem(nextpage);
-                } else if(orientations[2] < -45) {
-                    if (mViewPager.getCurrentItem() > 0) {
-                        int nextpage = mViewPager.getCurrentItem() - 1;
-                        mViewPager.setCurrentItem(nextpage);
-                    } else {
-                        Toast.makeText(MainActivity.this, "You are on the first page!", Toast.LENGTH_SHORT).show();
+                        } else {
+                            //far
+                            //Toast.makeText(mContext, "far", Toast.LENGTH_SHORT).show();
+                            endMilli = System.currentTimeMillis();
+                            changePage(endMilli - startMilli);
+                        }
                     }
-                }
+
+                    private void changePage(long l) {
+
+                        //Log.e("Time: ", String.valueOf(l));
+                        startMilli = 0;
+
+                        if (l < mThreshold) {
+                            //Toast.makeText(mContext, "Next ", Toast.LENGTH_SHORT).show();
+                            int nextpage=mViewPager.getCurrentItem()+1;
+                            mViewPager.setCurrentItem(nextpage);
+                        }
+                        else {
+                            //Toast.makeText(mContext, "Previous", Toast.LENGTH_SHORT).show(); /*Copyright (c) @ 2019 Yash Prakash
+                            //                 */
+                            if(mViewPager.getCurrentItem()>0) {
+                                int nextpage=mViewPager.getCurrentItem()-1;
+                                mViewPager.setCurrentItem(nextpage);
+                            }
+                            else {
+                                Toast.makeText(MainActivity.this, "You are on the first page!", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onAccuracyChanged(Sensor sensor, int i) {
+                    }
+                };
+            }
+        });
+
+
+        b_gyro.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.d(TAG, "In Gyro Button");
+
+                sensorManager.unregisterListener(proximitySensorListener);
+                sensorManager.registerListener(rvListener,
+                        rotationVectorSensor, SensorManager.SENSOR_DELAY_NORMAL);
+
+                rvListener = new SensorEventListener() {
+                    @Override
+                    public void onSensorChanged(SensorEvent sensorEvent) {
+                        Log.d(TAG, "IN GYRO SENSOR");
+                        float[] rotationMatrix = new float[16];
+                        SensorManager.getRotationMatrixFromVector(rotationMatrix, sensorEvent.values);
+
+                        float[] remappedRotationMatrix = new float[16];
+                        SensorManager.remapCoordinateSystem(rotationMatrix,
+                                SensorManager.AXIS_X,
+                                SensorManager.AXIS_Z,
+                                remappedRotationMatrix);
+
+                        float[] orientations = new float[3];
+                        SensorManager.getOrientation(remappedRotationMatrix, orientations);
+
+                        for(int i = 0; i < 3; i++) {
+                            orientations[i] = (float)(Math.toDegrees(orientations[i]));
+                        }
+
+                        if(orientations[2] > 45) {
+                            int nextpage=mViewPager.getCurrentItem()+1;
+                            mViewPager.setCurrentItem(nextpage);
+                        } else if(orientations[2] < -45) {
+                            if (mViewPager.getCurrentItem() > 0) {
+                                int nextpage = mViewPager.getCurrentItem() - 1;
+                                mViewPager.setCurrentItem(nextpage);
+                            } else {
+                                Toast.makeText(MainActivity.this, "You are on the first page!", Toast.LENGTH_SHORT).show();
+                            }
+                        }
 //                 else if(Math.abs(orientations[2]) < 10) {
 //                    getWindow().getDecorView().setBackgroundColor(Color.WHITE);
 //                }
-            }
+                    }
 
+                    @Override
+                    public void onAccuracyChanged(Sensor sensor, int i) {
+
+                    }
+                };
+            }
+        });
+
+
+        b_normal.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onAccuracyChanged(Sensor sensor, int i) {
-
+            public void onClick(View view) {
+                Log.d(TAG, "NO SENSORS");
+                sensorManager.unregisterListener(proximitySensorListener);
+                sensorManager.unregisterListener(rvListener);
+//                sensorManager.cancelTriggerSensor(proximitySensorListener, proximitySensor);
             }
-        };
+        });
 
 
 
