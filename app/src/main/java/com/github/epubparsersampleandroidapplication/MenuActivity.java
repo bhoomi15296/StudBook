@@ -56,8 +56,6 @@ public class MenuActivity extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-
     }
 
     @Override
@@ -75,7 +73,7 @@ public class MenuActivity extends Fragment {
 
         txtSpeechInput = (TextView) getView().findViewById(R.id.txtSpeechInput);
         btnSpeak = (ImageButton) getView().findViewById(R.id.btnSpeak);
-        takePicture =  getView().findViewById(R.id.camera);
+        takePicture =  getView().findViewById(R.id.camera_menu);
         Log.d("click",btnSpeak.toString());
 
         btnSpeak.setOnClickListener(new View.OnClickListener() {
@@ -183,6 +181,7 @@ public class MenuActivity extends Fragment {
             File gas_oil = getFileFromAssets("Gas_and_Oil_Engines,_Simply_Explained_by_Walter_C._Runciman.epub");
             File opportunities_oil = getFileFromAssets("Opportunities_in_Engineering_by_Charles_M._Horton.epub");
 
+
             files.add(0, sampleFile);
             files.add(1, gas_oil);
             files.add(2, opportunities_oil);
@@ -243,6 +242,7 @@ public class MenuActivity extends Fragment {
         Log.d("BEFORE", "askForWidgetToUse: ");
         final Intent intent = new Intent(getActivity(), MainActivity.class);
         intent.putExtra("filePath", filePath);
+        Log.d("FilePath in Menu",filePath);
         Log.d("AFTER", "askForWidgetToUse: ");
         new AlertDialog.Builder(getActivity())
                 .setTitle("Pick your widget")
@@ -261,8 +261,6 @@ public class MenuActivity extends Fragment {
                 })
                 .setIcon(android.R.drawable.ic_dialog_alert)
                 .show();
-
-
     }
 
     private void promptSpeechInput() {

@@ -5,4 +5,6 @@
     <string name="button_go">Go</string>
     <string name="speech_prompt">Say something&#8230;</string>
     <string name="speech_not_supported">Sorry! Your device doesn\'t support speech input</string>
+    <string name="pick_up">Pick Up where you Left Off!</string>
+    <string name="recommended">Recommended for You</string>
 </resources>
