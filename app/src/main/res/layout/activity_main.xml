@@ -44,19 +44,21 @@
             <Button
                 android:id="@+id/plus"
                 android:layout_width="wrap_content"
-                android:layout_height="25dp"
+                android:layout_height="30dp"
                 android:layout_margin="5dp"
-                android:background="#E4D9FA"
+                android:background="#463443"
                 android:text="+"
+                android:textColor="#FFFFFF"
                 android:textSize="10sp" />
 
             <Button
                 android:id="@+id/minus"
                 android:layout_width="wrap_content"
-                android:layout_height="25dp"
+                android:layout_height="30dp"
                 android:layout_margin="5dp"
-                android:background="#E4D9FA"
+                android:background="#463443"
                 android:text="-"
+                android:textColor="#FFFFFF"
                 android:textSize="10sp" />
 
         </LinearLayout>
@@ -71,33 +73,35 @@
             <Button
                 android:id="@+id/gbutton"
                 android:layout_width="wrap_content"
-                android:layout_height="25dp"
+                android:layout_height="30dp"
                 android:layout_alignParentBottom="true"
                 android:layout_margin="8dp"
                 android:layout_marginRight="3dp"
                 android:layout_marginBottom="8dp"
                 android:layout_weight="1"
-                android:background="#E4D9FA"
+                android:background="#463443"
                 android:text="One-Hand Mode"
+                android:textColor="#FFFFFF"
                 android:textSize="10sp" />
 
             <Button
                 android:id="@+id/pbutton"
                 android:layout_width="wrap_content"
-                android:layout_height="25dp"
+                android:layout_height="30dp"
                 android:layout_alignParentBottom="true"
                 android:layout_margin="8dp"
                 android:layout_marginLeft="3dp"
                 android:layout_marginBottom="8dp"
                 android:layout_weight="1"
-                android:background="#E4D9FA"
+                android:background="#463443"
                 android:text="No-Hand Mode"
+                android:textColor="#FFFFFF"
                 android:textSize="10sp" />
 
             <Button
                 android:id="@+id/nbutton"
                 android:layout_width="wrap_content"
-                android:layout_height="25dp"
+                android:layout_height="30dp"
                 android:layout_alignParentBottom="true"
                 android:layout_centerInParent="false"
                 android:layout_centerHorizontal="true"
@@ -105,8 +109,9 @@
                 android:layout_margin="8dp"
                 android:layout_marginBottom="8dp"
                 android:layout_weight="1"
-                android:background="#E4D9FA"
+                android:background="#463443"
                 android:text="Normal Mode"
+                android:textColor="#FFFFFF"
                 android:textSize="10sp" />
         </LinearLayout>
 
