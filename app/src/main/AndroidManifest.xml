@@ -19,6 +19,7 @@
         android:theme="@style/Theme.AppCompat.Light.DarkActionBar">
         <activity
             android:name=".SignUp"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"
             >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -27,7 +28,8 @@
             </intent-filter>
         </activity>
         <activity android:name=".MainActivityTest"/>
-        <activity android:name=".ActivityLogin" />
+        <activity android:name=".ActivityLogin"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>
         <activity android:name=".MenuActivity" />
         <activity android:name=".MainActivity" />
     </application>

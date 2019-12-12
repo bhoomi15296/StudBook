@@ -408,6 +408,7 @@ public class MenuActivity extends Fragment {
                 TextBlock textBlock = textBlocks.get(textBlocks.keyAt(i));
                 imageText = textBlock.getValue();                   // return string
             }
+            txtSpeechInput.setText(imageText);
             Log.d("TEXT", "onActivityResult: " + imageText);
         }
     }

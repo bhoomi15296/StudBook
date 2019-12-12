@@ -1,51 +1,77 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="center"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:weightSum="100">
 
-    <EditText
-        android:id="@+id/loginEmail"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="15dp"
-        android:hint="Email"
-        android:inputType="textEmailAddress"
-        android:fontFamily="sans-serif-condensed-light"
-        android:textAlignment="viewStart"
-        android:textColor="#000000"
-        android:typeface="normal" />
+        android:layout_height="match_parent"
+        android:layout_weight="10"
+        android:gravity="center|center_vertical"
+        android:orientation="vertical">
 
-    <EditText
-        android:id="@+id/loginpaswd"
+        <ImageView
+            android:id="@+id/imageView"
+            android:layout_width="398dp"
+            android:layout_height="174dp"
+            android:src="@drawable/logo" />
+
+        <EditText
+            android:id="@+id/loginEmail"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="15dp"
+            android:fontFamily="sans-serif-condensed-light"
+            android:hint="Email"
+            android:inputType="textEmailAddress"
+            android:textAlignment="viewStart"
+            android:textColor="#000000"
+            android:typeface="normal" />
+
+        <EditText
+            android:id="@+id/loginpaswd"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="15dp"
+            android:fontFamily="sans-serif-condensed-light"
+            android:hint="Password"
+            android:inputType="numberPassword"
+            android:textAlignment="viewStart"
+            android:textColor="#000000"
+            android:typeface="normal" />
+
+        <Button
+            android:id="@+id/btnLogIn"
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="15dp"
+            android:background="#463443"
+            android:text="Login"
+            android:textColor="#FFFFFF"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+    </LinearLayout>
+
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="15dp"
-        android:hint="Password"
-        android:inputType="numberPassword"
-        android:fontFamily="sans-serif-condensed-light"
-        android:textAlignment="viewStart"
-        android:textColor="#000000"
-        android:typeface="normal" />
+        android:layout_height="match_parent"
+        android:layout_weight="90"
+        android:gravity="bottom"
+        android:orientation="vertical">
 
-    <Button
-        android:id="@+id/btnLogIn"
-        android:layout_width="150dp"
-        android:layout_height="wrap_content"
-        android:layout_margin="15dp"
-        android:background="#6BB1D3"
-        android:text="Login"
-        android:textColor="#FFFFFF"
-        android:textSize="16sp"
-        android:textStyle="bold" />
+        <TextView
+            android:id="@+id/TVSignIn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="15dp"
+            android:text="New User? Register Here"
+            android:textSize="14dp"
+            android:textStyle="bold" />
+    </LinearLayout>
 
-    <TextView
-        android:id="@+id/TVSignIn"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="15dp"
-        android:text="New User? Register Here"
-        android:textSize="20dp"
-        android:textStyle="bold" />
 </LinearLayout>
