@@ -91,6 +91,7 @@ public class MenuActivity extends Fragment {
         btnSpeak = (ImageButton) getView().findViewById(R.id.btnSpeak);
         searchButton =  getView().findViewById(R.id.button_search);
         takePicture =  (ImageButton) getView().findViewById(R.id.camera);
+
         Log.d("click",btnSpeak.toString());
 
         btnSpeak.setOnClickListener(new View.OnClickListener() {
