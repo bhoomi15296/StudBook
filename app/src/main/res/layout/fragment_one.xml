@@ -1,17 +1,108 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:background="#D81B60"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    tools:context="com.github.epubparsersampleandroidapplication.MenuActivity">
 
-    <TextView
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/AppTheme.AppBarOverlay" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="-100dp"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/camera_fragOne"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="2"
+            android:text="Button" />
+
+        <EditText
+            android:id="@+id/txtSpeechInput_fragOne"
+            android:layout_width="270dp"
+            android:layout_height="45dp"
+            android:layout_gravity="center"
+            android:layout_weight="2"
+            android:hint="@string/textHint"
+            android:inputType="text"
+            android:textSize="20dp" />
+
+        <ImageButton
+            android:id="@+id/btnSpeak_fragOne"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@null"
+            android:src="@drawable/microphone_30" />
+
+        <Button
+            android:id="@+id/button_search_fragOne"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/button_go" />
+    </LinearLayout>
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:orientation="vertical"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Fragment One"
-        android:textSize="40dp"
-        android:textStyle="bold"
-        android:textColor="#fff"
-        android:layout_centerInParent="true"/>
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingTop="-40dp"
+        android:paddingRight="@dimen/activity_horizontal_margin"
+        android:paddingBottom="@dimen/activity_vertical_margin"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        tools:context="com.github.epubparsersampleandroidapplication.MenuActivity"
+        tools:showIn="@layout/activity_menu">
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/pick_up"
+            android:textSize="15dp"
+            android:textStyle="bold"/>
 
-</RelativeLayout>
+        <TextView
+            android:id="@+id/startText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="You haven't been reading books lately! Pick a book to start"
+            android:textSize="25dp"/>
+
+        <GridView
+            android:id="@+id/personal_book_info"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:numColumns="2"
+            android:stretchMode="columnWidth" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/recommended"
+            android:textSize="15dp"
+            android:textStyle="bold"/>
+
+        <GridView
+            android:id="@+id/recomend_book_info"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="0dp"
+            android:numColumns="2"
+            android:stretchMode="columnWidth" />
+    </LinearLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

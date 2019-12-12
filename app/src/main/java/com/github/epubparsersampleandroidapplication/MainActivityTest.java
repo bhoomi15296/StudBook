@@ -1,6 +1,7 @@
 package com.github.epubparsersampleandroidapplication;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -31,8 +32,6 @@ public class MainActivityTest extends AppCompatActivity {
 
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(viewPager);
-
-
     }
 
 
@@ -57,6 +56,7 @@ public class MainActivityTest extends AppCompatActivity {
         }
 
         public void addFragment(Fragment fragment, String title) {
+            Log.d("Fragments","Fragments called");
             mFragmentList.add(fragment);
             mFragmentTitleList.add(title);
         }

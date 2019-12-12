@@ -2,6 +2,7 @@ package com.github.epubparsersampleandroidapplication;
 
 import android.app.SearchManager;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -87,6 +88,7 @@ public class MainActivity extends AppCompatActivity implements PageFragment.OnFr
     private Button plusbtn;
     private Button minusbtn;
     private int textsize=25;
+    String filePath = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -236,7 +238,8 @@ public class MainActivity extends AppCompatActivity implements PageFragment.OnFr
 
 
         if (getIntent() != null && getIntent().getExtras() != null) {
-            String filePath = getIntent().getExtras().getString("filePath");
+            filePath = getIntent().getExtras().getString("filePath");
+            Log.d("FilePath",filePath);
             isPickedWebView = getIntent().getExtras().getBoolean("isWebView");
 
             try {
@@ -260,6 +263,8 @@ public class MainActivity extends AppCompatActivity implements PageFragment.OnFr
             } catch (ReadingException e) {
                 Toast.makeText(MainActivity.this, e.getMessage(), Toast.LENGTH_LONG).show();
             }
+
+
         }
     }
     private void writeNewUser(String userId, String name, String email) {
@@ -382,6 +387,18 @@ public class MainActivity extends AppCompatActivity implements PageFragment.OnFr
         if (!searchView.isIconified()) {
             loseFocusOnSearchView();
         } else {
+            //final Intent intent = new Intent(this,FragmentOne.class);
+            int startIndex = filePath.lastIndexOf("/");
+            String FileName = filePath.substring(startIndex+1,filePath.length());
+            Log.d("CurrentItem",FileName);
+
+            Bundle bundle = new Bundle();
+            bundle.putString("fileName", FileName);
+            bundle.putString("activity","MainActivity");
+            // set Fragmentclass Arguments
+            FragmentOne fragOne = new FragmentOne();
+            fragOne.setInstance(FileName);
+            Log.d("Arguments","Passed");
             super.onBackPressed();
         }
 

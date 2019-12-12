@@ -21,7 +21,6 @@
         android:gravity="center"
         android:orientation="horizontal">
 
-
         <ImageButton
             android:id="@+id/camera"
             android:layout_width="30dp"
@@ -29,6 +28,7 @@
             android:layout_gravity="right"
             android:src="@android:drawable/ic_menu_camera"
             />
+
 
         <EditText
             android:id="@+id/txtSpeechInput"
