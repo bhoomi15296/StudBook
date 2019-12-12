@@ -31,6 +31,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
+import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
@@ -83,6 +84,9 @@ public class MainActivity extends AppCompatActivity implements PageFragment.OnFr
     private long startMilli;
     private long endMilli;
 
+    private Button plusbtn;
+    private Button minusbtn;
+    private int textsize=25;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -428,9 +432,30 @@ public class MainActivity extends AppCompatActivity implements PageFragment.OnFr
             ScrollView scrollView = new ScrollView(MainActivity.this);
             scrollView.setLayoutParams(layoutParams);
 
-            TextView textView = new TextView(MainActivity.this);
+            final TextView textView = new TextView(MainActivity.this);
             textView.setLayoutParams(layoutParams);
 
+            plusbtn = findViewById(R.id.plus);
+            minusbtn = findViewById(R.id.minus);
+//            final int txtsize=(int)textView.getTextSize();
+
+            plusbtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    textsize += 5;
+                    textView.setTextSize(textsize);
+//                Log.d("HEREEE", "onClick: ");
+                }
+            });
+            minusbtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    textsize -= 5;
+                    textView.setTextSize(textsize);
+                }
+            });
+
+            textView.setTextSize(textsize);
             textView.setText(Html.fromHtml(data, new Html.ImageGetter() {
                 @Override
                 public Drawable getDrawable(String source) {
