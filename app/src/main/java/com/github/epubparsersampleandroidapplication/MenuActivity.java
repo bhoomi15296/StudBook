@@ -51,6 +51,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
@@ -59,7 +60,8 @@ public class MenuActivity extends Fragment {
     private ProgressBar progressBar;
     private TextView txtSpeechInput;
     private ImageButton btnSpeak;
-    private Button takePicture;
+    private ImageButton takePicture;
+    private Button searchButton;
     private final int REQ_CODE_SPEECH_INPUT = 100;
     private static final int CAMERA_REQUEST = 1888; // field
 
@@ -87,7 +89,8 @@ public class MenuActivity extends Fragment {
 
         txtSpeechInput = (TextView) getView().findViewById(R.id.txtSpeechInput);
         btnSpeak = (ImageButton) getView().findViewById(R.id.btnSpeak);
-        takePicture =  getView().findViewById(R.id.camera);
+        searchButton =  getView().findViewById(R.id.button_search);
+        takePicture =  (ImageButton) getView().findViewById(R.id.camera);
         Log.d("click",btnSpeak.toString());
 
         btnSpeak.setOnClickListener(new View.OnClickListener() {
@@ -111,6 +114,7 @@ public class MenuActivity extends Fragment {
         });
 
 
+
         ((GridView) getView().findViewById(R.id.grid_book_info)).setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
@@ -118,6 +122,7 @@ public class MenuActivity extends Fragment {
                 askForWidgetToUse(clickedItemFilePath);
             }
         });
+
 
         progressBar = (ProgressBar) getView().findViewById(R.id.progressbar);
 
@@ -177,8 +182,18 @@ public class MenuActivity extends Fragment {
             progressBar.setVisibility(View.GONE);
 
             if (bookInfoList != null) {
-                BookInfoGridAdapter adapter = new BookInfoGridAdapter(getActivity().getApplicationContext(), bookInfoList);
+                final BookInfoGridAdapter adapter = new BookInfoGridAdapter(getActivity().getApplicationContext(), bookInfoList);
+
                 ((GridView) getView().findViewById(R.id.grid_book_info)).setAdapter(adapter);
+
+                searchButton.setOnClickListener(new View.OnClickListener() {
+                    public void onClick(View v) {
+                        Log.d("TEXT", "onClick: " + txtSpeechInput.getText());
+                        adapter.getFilter().filter(txtSpeechInput.getText());
+
+                    }
+                });
+
             }
 
             if (occuredException != null) {
@@ -198,55 +213,57 @@ public class MenuActivity extends Fragment {
             final List<File> files = getListFiles(new File(Environment.getExternalStorageDirectory().getAbsolutePath()));
 
 //            read from database instead
-            final StorageReference listRef = firebaseStorage.getReference("Music");
+//            final StorageReference listRef = firebaseStorage.getReference("Music");
 
-            listRef.listAll()
-                    .addOnSuccessListener(new OnSuccessListener<ListResult>() {
-                        @Override
-                        public void onSuccess(ListResult listResult) {
-                            for (StorageReference prefix : listResult.getPrefixes()) {
-                                Log.d("TAG", "onSuccess: "+prefix);
-                                // All the prefixes under listRef.
-                                // You may call listAll() recursively on them.
-                            }
-
-                            for (final StorageReference item : listResult.getItems()) {
-                                // All the items under listRef.
-                                Log.d("ITEM", "onSuccess: " + item);
-                                final long ONE_MEGABYTE = 1024 * 1024 *5;
-
-                                item.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
-                                    @Override
-                                    public void onSuccess(byte[] bytes) {
-                                        // Data for "images/island.jpg" is returns, use this as needed
-                                       File test = storeFile(bytes);
-//                                       files.add(item.hashCode(), test);
-                                    }
-                                }).addOnFailureListener(new OnFailureListener() {
-                                    @Override
-                                    public void onFailure(@NonNull Exception exception) {
-                                        // Handle any errors
-                                    }
-                                });
-
-
-                            }
-                        }
-                    })
-                    .addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            // Uh-oh, an error occurred!
-                            Log.d("ITEM", "onFailure: " + e);
-                        }
-                    });
-
+//            listRef.listAll()
+//                    .addOnSuccessListener(new OnSuccessListener<ListResult>() {
+//                        @Override
+//                        public void onSuccess(ListResult listResult) {
+//                            for (StorageReference prefix : listResult.getPrefixes()) {
+//                                Log.d("TAG", "onSuccess: "+prefix);
+//                                // All the prefixes under listRef.
+//                                // You may call listAll() recursively on them.
+//                            }
+//
+//                            for (final StorageReference item : listResult.getItems()) {
+//                                // All the items under listRef.
+//                                Log.d("ITEM", "onSuccess: " + item);
+//                                final long ONE_MEGABYTE = 1024 * 1024 *5;
+//
+//                                item.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+//                                    @Override
+//                                    public void onSuccess(byte[] bytes) {
+//                                        // Data for "images/island.jpg" is returns, use this as needed
+//                                       File test = storeFile(bytes);
+////                                       files.add(item.hashCode(), test);
+//                                    }
+//                                }).addOnFailureListener(new OnFailureListener() {
+//                                    @Override
+//                                    public void onFailure(@NonNull Exception exception) {
+//                                        // Handle any errors
+//                                    }
+//                                });
+//
+//
+//                            }
+//                        }
+//                    })
+//                    .addOnFailureListener(new OnFailureListener() {
+//                        @Override
+//                        public void onFailure(@NonNull Exception e) {
+//                            // Uh-oh, an error occurred!
+//                            Log.d("ITEM", "onFailure: " + e);
+//                        }
+//                    });
+//
 
             AssetManager assetManager = getResources().getAssets();
-            String[] books = assetManager.list("books");
+            String[] books = assetManager.list("");
             int i = 0;
             for(String book : books) {
-                files.add(i++, getFileFromAssets(book));
+                if(book.endsWith(".epub")) {
+                    files.add(i++, getFileFromAssets(book));
+                }
             }
 
 //            File sampleFile = getFileFromAssets("pg28885-images_new.epub");
@@ -259,7 +276,6 @@ public class MenuActivity extends Fragment {
 
             for (File file : files) {
                 BookInfo bookInfo = new BookInfo();
-
                 bookInfo.setTitle(file.getName());
                 bookInfo.setFilePath(file.getPath());
 
@@ -284,6 +300,7 @@ public class MenuActivity extends Fragment {
 
     public File getFileFromAssets(String fileName) {
         File file = new File(getActivity().getCacheDir() + "/" + fileName);
+        Log.d("TEST", "getFileFromAssets: " + file);
         if (!file.exists()) try {
             InputStream is = getActivity().getAssets().open(fileName);
             int size = is.available();

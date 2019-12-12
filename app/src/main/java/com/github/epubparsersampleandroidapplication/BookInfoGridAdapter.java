@@ -7,22 +7,34 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by Mert on 08.09.2016.
- */
-public class BookInfoGridAdapter extends BaseAdapter {
+
+public class BookInfoGridAdapter extends BaseAdapter implements Filterable {
 
     private Context context;
     private List<BookInfo> bookInfoList;
+    private List<BookInfo> filterbookInfoList;
+    CustomFilter filter;
 
     public BookInfoGridAdapter(Context context, List<BookInfo> bookInfoList) {
         this.context = context;
         this.bookInfoList = bookInfoList;
+        this.filterbookInfoList = bookInfoList;
+    }
+
+    @Override
+    public Filter getFilter() {
+        if(filter == null) {
+            filter = new CustomFilter();
+        }
+        return filter;
     }
 
     private final class ViewHolder {
@@ -128,4 +140,43 @@ public class BookInfoGridAdapter extends BaseAdapter {
 
         return inSampleSize;
     }
+
+    class CustomFilter extends Filter {
+        FilterResults results = new FilterResults();
+
+        @Override
+        protected FilterResults performFiltering(CharSequence charSequence) {
+            if (charSequence != null && charSequence.length() > 0){
+                charSequence= charSequence.toString().toUpperCase();
+                ArrayList<BookInfo> filters = new ArrayList<BookInfo>();
+
+//                FILTERING
+
+                for(int i=0; i<filterbookInfoList.size(); i++) {
+                    if(filterbookInfoList.get(i).getTitle().toUpperCase().contains(charSequence)) {
+                        BookInfo book = new BookInfo(
+                                filterbookInfoList.get(i).getTitle(),filterbookInfoList.get(i).getCoverImage(),
+                                filterbookInfoList.get(i).getFilePath(),
+                                filterbookInfoList.get(i).isCoverImageNotExists(), filterbookInfoList.get(i).getCoverImageBitmap());
+                        filters.add(book);
+                    }
+                }
+                results.count = filters.size();
+                results.values = filters;
+
+            }
+            else {
+                results.count = filterbookInfoList.size();
+                results.values = filterbookInfoList;
+            }
+            return results;
+        }
+
+        @Override
+        protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
+            bookInfoList = (ArrayList<BookInfo>) results.values;
+            notifyDataSetChanged();
+        }
+    }
+
 }
