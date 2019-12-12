@@ -54,8 +54,8 @@ public class BookInfoGridAdapter extends BaseAdapter {
             convertView = inflater.inflate(R.layout.book_item, parent, false);
 
             viewHolder = new ViewHolder();
-            viewHolder.title = (TextView) convertView.findViewById(R.id.txt_book_title);
-            viewHolder.coverImage = (ImageView) convertView.findViewById(R.id.img_cover);
+            viewHolder.title = convertView.findViewById(R.id.txt_book_title);
+            viewHolder.coverImage = convertView.findViewById(R.id.img_cover);
 
             convertView.setTag(viewHolder);
         } else {

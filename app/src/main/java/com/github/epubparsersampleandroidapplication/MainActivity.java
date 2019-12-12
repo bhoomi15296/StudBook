@@ -4,8 +4,13 @@ import android.app.SearchManager;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.os.Bundle;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
@@ -20,6 +25,7 @@ import android.text.Html;
 import android.text.TextUtils;
 import android.util.Base64;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -51,6 +57,7 @@ public class MainActivity extends AppCompatActivity implements PageFragment.OnFr
      * {@link FragmentStatePagerAdapter}.
      */
     private SectionsPagerAdapter mSectionsPagerAdapter;
+    private static final String TAG = "SensorsTest";
 
     private int pageCount = Integer.MAX_VALUE;
     private int pxScreenWidth;
@@ -62,21 +69,141 @@ public class MainActivity extends AppCompatActivity implements PageFragment.OnFr
 
     private boolean isSkippedToPage = false;
 
+    private SensorManager sensorManager;
+    private Sensor proximitySensor;
+    private SensorEventListener proximitySensorListener;
+
+    private Sensor rotationVectorSensor;
+    private SensorEventListener rvListener;
+
+    private long mThreshold = 1500;
+//    private long mScrollThreshold = 3000;
+    private long startMilli;
+    private long endMilli;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         pxScreenWidth = getResources().getDisplayMetrics().widthPixels;
 
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
 
-        mViewPager = (ViewPager) findViewById(R.id.container);
+        mViewPager = findViewById(R.id.container);
         mViewPager.setOffscreenPageLimit(0);
         mViewPager.setAdapter(mSectionsPagerAdapter);
+
+        // Initialize sensor manager
+        sensorManager =
+                (SensorManager) getSystemService(SENSOR_SERVICE);
+
+        // Using proximity sensor
+        proximitySensor =
+                sensorManager.getDefaultSensor(Sensor.TYPE_PROXIMITY);
+
+        if(proximitySensor == null) {
+            Log.e(TAG, "Proximity sensor not available.");
+//            finish();
+        }
+
+
+        // Create listener
+        proximitySensorListener = new SensorEventListener() {
+            @Override
+            public void onSensorChanged(SensorEvent sensorEvent) {
+                Log.d(TAG, "IN SENSOR");
+                // More code goes here
+                if (sensorEvent.values[0] < proximitySensor.getMaximumRange()) {
+                    //near
+                    //Toast.makeText(mContext, "near", Toast.LENGTH_SHORT).show();
+                    startMilli = System.currentTimeMillis();
+
+                } else {
+                    //far
+                    //Toast.makeText(mContext, "far", Toast.LENGTH_SHORT).show();
+                    endMilli = System.currentTimeMillis();
+                    changePage(endMilli - startMilli);
+                }
+            }
+
+            private void changePage(long l) {
+
+                //Log.e("Time: ", String.valueOf(l));
+                startMilli = 0;
+
+                if (l < mThreshold) {
+                    //Toast.makeText(mContext, "Next ", Toast.LENGTH_SHORT).show();
+                    int nextpage=mViewPager.getCurrentItem()+1;
+                    mViewPager.setCurrentItem(nextpage);
+                }
+                else {
+                    //Toast.makeText(mContext, "Previous", Toast.LENGTH_SHORT).show(); /*Copyright (c) @ 2019 Yash Prakash
+                    //                 */
+                    if(mViewPager.getCurrentItem()>0) {
+                        int nextpage=mViewPager.getCurrentItem()-1;
+                        mViewPager.setCurrentItem(nextpage);
+                    }
+                    else {
+                        Toast.makeText(MainActivity.this, "You are on the first page!", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            }
+
+            @Override
+            public void onAccuracyChanged(Sensor sensor, int i) {
+            }
+        };
+
+        rotationVectorSensor =
+                sensorManager.getDefaultSensor(Sensor.TYPE_ROTATION_VECTOR);
+
+        rvListener = new SensorEventListener() {
+            @Override
+            public void onSensorChanged(SensorEvent sensorEvent) {
+                float[] rotationMatrix = new float[16];
+                SensorManager.getRotationMatrixFromVector(rotationMatrix, sensorEvent.values);
+
+                float[] remappedRotationMatrix = new float[16];
+                SensorManager.remapCoordinateSystem(rotationMatrix,
+                        SensorManager.AXIS_X,
+                        SensorManager.AXIS_Z,
+                        remappedRotationMatrix);
+
+                float[] orientations = new float[3];
+                SensorManager.getOrientation(remappedRotationMatrix, orientations);
+
+                for(int i = 0; i < 3; i++) {
+                    orientations[i] = (float)(Math.toDegrees(orientations[i]));
+                }
+
+                if(orientations[2] > 45) {
+                    int nextpage=mViewPager.getCurrentItem()+1;
+                    mViewPager.setCurrentItem(nextpage);
+                } else if(orientations[2] < -45) {
+                    if (mViewPager.getCurrentItem() > 0) {
+                        int nextpage = mViewPager.getCurrentItem() - 1;
+                        mViewPager.setCurrentItem(nextpage);
+                    } else {
+                        Toast.makeText(MainActivity.this, "You are on the first page!", Toast.LENGTH_SHORT).show();
+                    }
+                }
+//                 else if(Math.abs(orientations[2]) < 10) {
+//                    getWindow().getDecorView().setBackgroundColor(Color.WHITE);
+//                }
+            }
+
+            @Override
+            public void onAccuracyChanged(Sensor sensor, int i) {
+
+            }
+        };
+
+
 
         if (getIntent() != null && getIntent().getExtras() != null) {
             String filePath = getIntent().getExtras().getString("filePath");
@@ -104,6 +231,22 @@ public class MainActivity extends AppCompatActivity implements PageFragment.OnFr
                 Toast.makeText(MainActivity.this, e.getMessage(), Toast.LENGTH_LONG).show();
             }
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        sensorManager.registerListener(proximitySensorListener,
+                proximitySensor, 2 * 1000 * 1000);
+        sensorManager.registerListener(rvListener,
+                rotationVectorSensor, SensorManager.SENSOR_DELAY_NORMAL);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        sensorManager.unregisterListener(proximitySensorListener);
+        sensorManager.unregisterListener(rvListener);
     }
 
     @Override

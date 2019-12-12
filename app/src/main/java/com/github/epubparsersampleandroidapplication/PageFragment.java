@@ -55,7 +55,7 @@ public class PageFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_display, container, false);
 
-        RelativeLayout mainLayout = (RelativeLayout) rootView.findViewById(R.id.fragment_main_layout);
+        RelativeLayout mainLayout = rootView.findViewById(R.id.fragment_main_layout);
 
         View view = onFragmentReadyListener.onFragmentReady(getArguments().getInt(ARG_TAB_POSITON));
 
