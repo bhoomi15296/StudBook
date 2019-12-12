@@ -9,6 +9,7 @@
     <uses-feature
         android:name="android.hardware.sensor.gyroscope"
         android:required="true" />
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:allowBackup="true"
@@ -17,7 +18,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.Light.DarkActionBar">
         <activity
-            android:name=".MainActivityTest"
+            android:name=".SignUp"
             >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -25,7 +26,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".MainActivity"/>
+        <activity android:name=".MainActivityTest"/>
+        <activity android:name=".ActivityLogin" />
+        <activity android:name=".MenuActivity" />
     </application>
+
 
 </manifest>
