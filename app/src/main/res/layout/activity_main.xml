@@ -24,7 +24,8 @@
     <androidx.viewpager.widget.ViewPager
         android:id="@+id/container"
         android:layout_width="match_parent"
-        android:layout_height="605dp">
+        android:layout_height="560dp"
+        android:layout_alignParentTop="true">
 
     </androidx.viewpager.widget.ViewPager>
 
@@ -43,55 +44,70 @@
             <Button
                 android:id="@+id/plus"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="+" />
+                android:layout_height="25dp"
+                android:layout_margin="5dp"
+                android:background="#E4D9FA"
+                android:text="+"
+                android:textSize="10sp" />
 
             <Button
                 android:id="@+id/minus"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="-" />
+                android:layout_height="25dp"
+                android:layout_margin="5dp"
+                android:background="#E4D9FA"
+                android:text="-"
+                android:textSize="10sp" />
 
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="horizontal">
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:weightSum="3">
 
             <Button
                 android:id="@+id/gbutton"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignEnd="@id/applayout"
+                android:layout_height="25dp"
                 android:layout_alignParentBottom="true"
-                android:layout_marginTop="5dp"
+                android:layout_margin="8dp"
                 android:layout_marginRight="3dp"
                 android:layout_marginBottom="8dp"
-                android:text="One-Hand Mode" />
+                android:layout_weight="1"
+                android:background="#E4D9FA"
+                android:text="One-Hand Mode"
+                android:textSize="10sp" />
 
             <Button
                 android:id="@+id/pbutton"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="25dp"
                 android:layout_alignParentBottom="true"
+                android:layout_margin="8dp"
                 android:layout_marginLeft="3dp"
-                android:layout_marginTop="5dp"
                 android:layout_marginBottom="8dp"
                 android:layout_weight="1"
-                android:text="No-Hand Mode" />
+                android:background="#E4D9FA"
+                android:text="No-Hand Mode"
+                android:textSize="10sp" />
 
             <Button
                 android:id="@+id/nbutton"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="25dp"
                 android:layout_alignParentBottom="true"
                 android:layout_centerInParent="false"
                 android:layout_centerHorizontal="true"
                 android:layout_centerVertical="false"
-                android:layout_marginTop="5dp"
+                android:layout_margin="8dp"
                 android:layout_marginBottom="8dp"
-                android:text="Normal Mode" />
+                android:layout_weight="1"
+                android:background="#E4D9FA"
+                android:text="Normal Mode"
+                android:textSize="10sp" />
         </LinearLayout>
 
     </LinearLayout>

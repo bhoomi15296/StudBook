@@ -17,17 +17,17 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="-100dp"
+        android:layout_marginTop="-75dp"
         android:gravity="center"
         android:orientation="horizontal">
 
         <ImageButton
             android:id="@+id/camera"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:layout_gravity="right"
-            android:src="@android:drawable/ic_menu_camera"
-            />
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:layout_weight="2"
+            android:background="@null"
+            android:src="@android:drawable/ic_menu_camera" />
 
 
         <EditText
@@ -56,6 +56,10 @@
             android:text="@string/button_go" />
     </LinearLayout>
 
-    <include layout="@layout/content_menu" />
+    <include
+        layout="@layout/content_menu"
+        android:layout_width="match_parent"
+        android:layout_height="550dp"
+        android:layout_gravity="bottom" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

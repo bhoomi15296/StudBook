@@ -27,7 +27,7 @@ public class MainActivityTest extends AppCompatActivity {
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
         // Add Fragments to adapter one by one
         adapter.addFragment(new FragmentOne(), "RECENT READS");
-        adapter.addFragment(new MenuActivity(), "LIBARY");
+        adapter.addFragment(new MenuActivity(), "LIBRARY");
         viewPager.setAdapter(adapter);
 
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
