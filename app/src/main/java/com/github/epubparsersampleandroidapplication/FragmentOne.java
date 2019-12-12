@@ -331,8 +331,6 @@ public class FragmentOne extends Fragment {
     }
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        onActivityResult(requestCode, resultCode, data);
-
         switch (requestCode) {
             case REQ_CODE_SPEECH_INPUT: {
                 if (resultCode == -1 && null != data) {
@@ -361,6 +359,7 @@ public class FragmentOne extends Fragment {
                 TextBlock textBlock = textBlocks.get(textBlocks.keyAt(i));
                 imageText = textBlock.getValue();                   // return string
             }
+            txtSpeechInput.setText(imageText);
             Log.d("TEXT", "onActivityResult: " + imageText);
         }
     }
