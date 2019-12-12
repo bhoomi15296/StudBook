@@ -65,7 +65,7 @@ public class FragmentOne extends Fragment {
 
     private FragmentOne mInstance;
     private ArrayList<String> BookList = new ArrayList<>();
-    final public ArrayList<String> RecommendList = new ArrayList<>();
+    final public static ArrayList<String> RecommendList = new ArrayList<>();
 
     public FragmentOne() {
         // Required empty public constructor
@@ -112,6 +112,14 @@ public class FragmentOne extends Fragment {
         });
 
         ((GridView) getView().findViewById(R.id.personal_book_info)).setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                String clickedItemFilePath = ((BookInfo) adapterView.getAdapter().getItem(i)).getFilePath();
+                askForWidgetToUse(clickedItemFilePath);
+            }
+        });
+
+        ((GridView) getView().findViewById(R.id.recomend_book_info)).setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 String clickedItemFilePath = ((BookInfo) adapterView.getAdapter().getItem(i)).getFilePath();
@@ -171,7 +179,9 @@ public class FragmentOne extends Fragment {
         String message = getInstance();
         if(message != null){
             Log.d("Message",message);
-            BookList.add(message);
+            if(!BookList.contains(message)){
+                BookList.add(message);
+            }
             RecommendBooks(BookList);
             new ListBookInfoTask().execute();
         }
@@ -394,11 +404,15 @@ public class FragmentOne extends Fragment {
                             if (task.isSuccessful()) {
                                 for (QueryDocumentSnapshot document : task.getResult()) {
                                     String title = document.getData().toString();
+                                    Log.d("Title before processing",title);
                                     if(title!="" && title!=null){
                                         int index = title.indexOf("=");
                                         title=title.substring(index+1,title.length()-1);
                                         Log.d("TITLEEEEE", title);
-                                        f1.RecommendList.add(title);
+                                        if(!((f1.RecommendList).contains(title))){
+                                            f1.RecommendList.add(title);
+                                        }
+                                        Log.d("RecommendList",f1.RecommendList.toString());
                                     }
                                     //Log.d("FIND", document.getId() + " => " + document.getData());
                                 }
@@ -425,6 +439,7 @@ public class FragmentOne extends Fragment {
         @Override
         protected List<BookInfo> doInBackground(Object... params) {
             Log.d("GridView", "Inside GridView");
+            Log.d("Reco in Async",FragmentOne.RecommendList.toString());
             List<BookInfo> bookInfoList = searchForEPubFiles();
 
             Reader reader = new Reader();
