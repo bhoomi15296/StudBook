@@ -4,11 +4,13 @@ import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -32,13 +34,22 @@ import android.widget.Toast;
 
 import com.github.mertakdut.Reader;
 import com.github.mertakdut.exception.ReadingException;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.gms.vision.Frame;
 import com.google.android.gms.vision.text.TextBlock;
 import com.google.android.gms.vision.text.TextRecognizer;
+import com.google.firebase.storage.FileDownloadTask;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.ListResult;
+import com.google.firebase.storage.StorageReference;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -52,6 +63,7 @@ public class MenuActivity extends Fragment {
     private final int REQ_CODE_SPEECH_INPUT = 100;
     private static final int CAMERA_REQUEST = 1888; // field
 
+    FirebaseStorage firebaseStorage;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -110,6 +122,8 @@ public class MenuActivity extends Fragment {
         progressBar = (ProgressBar) getView().findViewById(R.id.progressbar);
 
         new ListBookInfoTask().execute();
+        firebaseStorage = FirebaseStorage.getInstance();
+
     }
 
 
@@ -125,7 +139,12 @@ public class MenuActivity extends Fragment {
 
         @Override
         protected List<BookInfo> doInBackground(Object... params) {
-            List<BookInfo> bookInfoList = searchForPdfFiles();
+            List<BookInfo> bookInfoList = new ArrayList<>();
+            try {
+            bookInfoList = searchForPdfFiles(); }
+            catch (IOException ie) {
+
+            }
 
             Reader reader = new Reader();
             for (BookInfo bookInfo : bookInfoList) {
@@ -168,7 +187,7 @@ public class MenuActivity extends Fragment {
         }
     }
 
-    private List<BookInfo> searchForPdfFiles() {
+    private List<BookInfo> searchForPdfFiles() throws IOException {
         boolean isSDPresent = Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED);
 
         List<BookInfo> bookInfoList = null;
@@ -176,16 +195,67 @@ public class MenuActivity extends Fragment {
         if (isSDPresent) {
             bookInfoList = new ArrayList<>();
 
-            List<File> files = getListFiles(new File(Environment.getExternalStorageDirectory().getAbsolutePath()));
+            final List<File> files = getListFiles(new File(Environment.getExternalStorageDirectory().getAbsolutePath()));
 
 //            read from database instead
-            File sampleFile = getFileFromAssets("pg28885-images_new.epub");
-            File gas_oil = getFileFromAssets("Gas_and_Oil_Engines,_Simply_Explained_by_Walter_C._Runciman.epub");
-            File opportunities_oil = getFileFromAssets("Opportunities_in_Engineering_by_Charles_M._Horton.epub");
+            final StorageReference listRef = firebaseStorage.getReference("Music");
 
-            files.add(0, sampleFile);
-            files.add(1, gas_oil);
-            files.add(2, opportunities_oil);
+            listRef.listAll()
+                    .addOnSuccessListener(new OnSuccessListener<ListResult>() {
+                        @Override
+                        public void onSuccess(ListResult listResult) {
+                            for (StorageReference prefix : listResult.getPrefixes()) {
+                                Log.d("TAG", "onSuccess: "+prefix);
+                                // All the prefixes under listRef.
+                                // You may call listAll() recursively on them.
+                            }
+
+                            for (final StorageReference item : listResult.getItems()) {
+                                // All the items under listRef.
+                                Log.d("ITEM", "onSuccess: " + item);
+                                final long ONE_MEGABYTE = 1024 * 1024 *5;
+
+                                item.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
+                                    @Override
+                                    public void onSuccess(byte[] bytes) {
+                                        // Data for "images/island.jpg" is returns, use this as needed
+                                       File test = storeFile(bytes);
+//                                       files.add(item.hashCode(), test);
+                                    }
+                                }).addOnFailureListener(new OnFailureListener() {
+                                    @Override
+                                    public void onFailure(@NonNull Exception exception) {
+                                        // Handle any errors
+                                    }
+                                });
+
+
+                            }
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            // Uh-oh, an error occurred!
+                            Log.d("ITEM", "onFailure: " + e);
+                        }
+                    });
+
+
+            AssetManager assetManager = getResources().getAssets();
+            String[] books = assetManager.list("books");
+            int i = 0;
+            for(String book : books) {
+                files.add(i++, getFileFromAssets(book));
+            }
+
+//            File sampleFile = getFileFromAssets("pg28885-images_new.epub");
+//            File gas_oil = getFileFromAssets("Gas_and_Oil_Engines,_Simply_Explained_by_Walter_C._Runciman.epub");
+//            File opportunities_oil = getFileFromAssets("Opportunities_in_Engineering_by_Charles_M._Horton.epub");
+//
+//            files.add(0, sampleFile);
+//            files.add(1, gas_oil);
+//            files.add(2, opportunities_oil);
 
             for (File file : files) {
                 BookInfo bookInfo = new BookInfo();
@@ -200,12 +270,21 @@ public class MenuActivity extends Fragment {
         return bookInfoList;
     }
 
+    public File storeFile(byte[] bytes) {
+        File file = new File(getActivity().getCacheDir() + "/" + "books" );
+        try {
+            FileOutputStream fos = new FileOutputStream(file);
+            fos.write(bytes);
+            fos.close();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        return file;
+    }
+
     public File getFileFromAssets(String fileName) {
-
         File file = new File(getActivity().getCacheDir() + "/" + fileName);
-
         if (!file.exists()) try {
-
             InputStream is = getActivity().getAssets().open(fileName);
             int size = is.available();
             byte[] buffer = new byte[size];
@@ -221,6 +300,8 @@ public class MenuActivity extends Fragment {
 
         return file;
     }
+
+
 
     private List<File> getListFiles(File parentDir) {
         ArrayList<File> inFiles = new ArrayList<>();
